@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout :: head"></head>
+<body>
+<header th:replace="layout/layout :: header"></header>
+
+    <div class="container mt-3">
+        <div class="card w-50 mx-auto">
+            <div class="card-header text-center">Please, sign in</div>
+            <div class="card-body">
+                <form th:action="@{/login}" method="post">
+                    <div class="mb-3">
+                        <label for="txt-username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="txt-username" name="username" placeholder="Username" autofocus>
+                        <!--<div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>-->
+                    </div>
+                    <div class="mb-3">
+                        <label for="txt-password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="txt-password" name="password" placeholder="Password">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<footer th:replace="layout/layout :: footer"></footer>
+</body>
+</html>

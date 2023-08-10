@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="layout/layout :: head"></head>
+<body>
+<header th:replace="layout/layout :: header"></header>
+
+<div class="container mt-5">
+    <!--    <h1 class="text-primary text-uppercase fs-4" th:text="${titulo}"></h1>-->
+    <div class="card">
+        <div class="card-header">
+            <h3 th:text="${titulo}"></h3>
+            <a class="btn btn-secondary btn-xs mt-3" th:href="@{'/listar'}" th:text="'&laquo; Volver'"></a>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/factura/form}" th:object="${factura}" method="POST">
+                <div class="form-group row mt-3">
+                    <label class="col-md-4 ">Cliente</label>
+                    <div class="col-md-8">
+                        <input th:value="${factura.cliente.nombre+' '+factura.cliente.apellido}" class="form-control"
+                               disabled/>
+                    </div>
+                </div>
+
+                <div class="form-group row mt-3">
+                    <label for="txtDescripcion" class="col-md-4 col-form-label">Descripción</label>
+                    <div class="col-md-8">
+                        <input type="text" name="txtDescripcion" id="txtDescripcion" class="form-control"
+                               th:field="*{descripcion}"
+                               th:errorClass="'form-control is-invalid'"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}"
+                             th:errors="*{descripcion}"></div>
+                    </div>
+                </div>
+
+                <div class="form-group row mt-3">
+                    <label for="txtObservacion" class="col-md-4 col-form-label">Observación</label>
+                    <div class="col-md-8">
+                        <textarea class="form-control" name="txtObservacion" id="txtObservacion"
+                                  th:field="*{observacion}"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group row mt-3">
+                    <label for="busqueda_productos" class="col-md-4 col-form-label">Productos</label>
+                    <div class="col-md-8">
+                        <input type="text" name="busqueda_productos" id="busqueda_productos" class="form-control"/>
+                    </div>
+                </div>
+
+                <table th:replace="factura/plantilla-items :: itemsFactura"></table>
+
+                <table id="cargarItemProductos" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Eliminar</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+
+                <h1>Total: <span class="badge bg-success" id="granTotal">0</span></h1>
+                <div class="form-group row mt-3">
+                    <div class="col-md-8 justify-content-center">
+                        <input type="submit" class="btn btn-primary btn-block" value="Generar">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<footer th:replace="layout/layout :: footer"></footer>
+<script th:replace="factura/js/buscador-productos :: javascript"></script>
+</body>
+</html>

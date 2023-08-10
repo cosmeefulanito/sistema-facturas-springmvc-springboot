@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout :: head"></head>
+<body>
+<header th:replace="layout/layout :: header"></header>
+<div class="container mt-3">
+
+  <div class="card bg-danger text-white w-auto">
+    <div class="card-header  text-center border-bottom">Acceso restringido</div>
+    <div class="card-body">
+      <p>Lo sentimos <span th:text="${#authentication.name}"></span>, no tienes acceso a este recurso</p>
+      <a class="btn btn-outline-light" th:href="@{/listar}">Volver</a>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="layout/layout :: footer"></footer>
+</body>
+</html>

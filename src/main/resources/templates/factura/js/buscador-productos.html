@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<script type="text/javascript" th:fragment="javascript">
+    $(document).ready(function () {
+        console.log("Estoy cargando bien jqueryUI");
+        $("#busqueda_productos").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/factura/cargar-productos/" + request.term,
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                                //console.log("item: ", item)
+                                return {
+                                    value: item.id,
+                                    label: item.nombre,
+                                    precio: item.precio
+                                }
+                            })
+                        )
+
+                    }
+                })
+            },
+            select: function (event, ui) {
+                //console.log("ui: ", ui)
+                //$("#busqueda_productos").val(ui.item.label)
+
+                itemsHelper.calcularGranTotal(ui.item.value);
+                // el producto existe en la tabla?
+
+                // si existe no tengo que agregar otra fila y tengo que acumular el total (precioXcantidad)
+                if(itemsHelper.hasProducto(ui.item.value)){
+                    itemsHelper.acumulaTotal(ui.item.value,ui.item.precio);
+                    return false;
+                }
+                let lineas = $("#plantillaItemsFactura").html();
+
+                lineas = lineas.replace(/{ID}/g, ui.item.value);
+                lineas = lineas.replace(/{NOMBRE}/g, ui.item.label);
+                lineas = lineas.replace(/{PRECIO}/g, ui.item.precio);
+
+                $("#cargarItemProductos tbody").append(lineas);
+                itemsHelper.calcularImporte(ui.item.value,ui.item.precio,1)
+                return false;
+            }
+        })
+
+        $("form").submit(function (){
+            $("#plantillaItemsFactura").remove();
+        })
+    })
+
+    var itemsHelper = {
+        calcularImporte: function (id,precio,cantidad){
+            $("#total_importe_"+id).html(parseInt(precio) * parseInt(cantidad));
+            this.calcularGranTotal(id);
+        },
+        hasProducto: function (id){
+            var resultado=false;
+            $("input[name='item_id[]']").each(function(){
+                if (parseInt($(this).val()) == parseInt(id) ){
+                    resultado=true;
+                }
+            })
+
+            return resultado;
+        },
+        acumulaTotal: function (id,precio){
+            let cantidad = $("#cantidad_"+id).val() ? parseInt($("#cantidad_"+id).val()) : 0;
+            $("#cantidad_"+id).val(++cantidad);
+            console.log("Cantidad: ", cantidad);
+            this.calcularImporte(id,precio,cantidad);
+        },
+        eliminarProducto: function (id){
+            $("#row_"+id).remove();
+            this.calcularGranTotal(id);
+        },
+        calcularGranTotal: function (id){
+            let total=0;
+            $("span[id^='total_importe_']").each(function (){
+                total+= parseInt($(this).html());
+            });
+            $("#granTotal").html(total);
+        }
+    }
+
+</script>
+</body>
+</html>
